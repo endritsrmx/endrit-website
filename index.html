@@ -6,11 +6,22 @@
   <title>endrIT Solutions – IT-Support, Websites und Social Media in Buchs AG</title>
   <meta name="description" content="IT-Support, Websites und Social-Media-Betreuung für Private und KMU. Vor Ort in Buchs AG oder per Fernwartung, auf Deutsch oder Englisch.">
   <meta name="theme-color" content="#F2F4F4">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="canonical" href="https://endr-it.ch/">
   <link rel="preload" href="assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://endr-it.ch/">
+  <meta property="og:site_name" content="endrIT Solutions">
   <meta property="og:title" content="endrIT Solutions – Endrit Sermaxhaj">
-  <meta property="og:description" content="IT-Support, Websites und Social Media aus Buchs AG.">
-  <meta property="og:image" content="assets/logo.svg">
+  <meta property="og:description" content="IT-Support, Websites und Social Media für Private und KMU in Buchs AG. Vor Ort oder per Fernwartung.">
+  <meta property="og:image" content="https://endr-it.ch/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="de_CH">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="css/style.css">
   <script>
     document.documentElement.classList.add('js');
@@ -144,8 +155,11 @@
     <!-- ÜBER MICH -->
     <section class="about wrap" id="ueber" aria-labelledby="about-title">
       <figure class="about__photo">
-        <img src="assets/endrit.jpg" alt="Endrit Sermaxhaj" width="800" height="1000" loading="lazy" decoding="async"
-             onerror="this.parentNode.classList.add('is-empty');this.remove()">
+        <picture>
+          <source srcset="assets/endrit.webp" type="image/webp">
+          <img src="assets/endrit.jpg" alt="Endrit Sermaxhaj" width="896" height="1200" loading="lazy" decoding="async"
+               onerror="this.closest('figure').classList.add('is-empty');this.closest('picture').remove()">
+        </picture>
         <span class="about__fallback" aria-hidden="true"></span>
       </figure>
       <div class="about__text">
@@ -168,8 +182,15 @@
             <div><dt data-i18n="reply">Antwort</dt><dd data-i18n="replyV">Meist innert 24 Stunden</dd></div>
           </dl>
 
-          <!-- data-endpoint="https://formspree.io/f/DEINE-ID" setzen, damit direkt gesendet wird -->
-          <form class="form" id="form" novalidate data-endpoint="">
+          <!-- Versand über FormSubmit (wie bisher): Captcha erscheint im Fenster, Kunde erhält eine Eingangsbestätigung -->
+          <form class="form" id="form" action="https://formsubmit.co/info@endr-it.ch" method="POST" target="fs-frame" accept-charset="UTF-8" novalidate>
+            <input type="hidden" name="_subject" value="Neue Anfrage über endr-it.ch">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_next" value="https://endr-it.ch/gesendet.html">
+            <input type="hidden" name="_replyto" value="">
+            <input type="hidden" name="_autoresponse" value="">
+            <input type="hidden" name="service" value="">
+            <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
             <fieldset class="form__topics">
               <legend data-i18n="fTopic">Worum geht's?</legend>
               <label><input type="radio" name="topic" value="it" checked><span data-i18n="tIt">IT-Support</span></label>
@@ -204,6 +225,21 @@
       </div>
     </section>
   </main>
+
+  <!-- Captcha-Fenster für den Versand -->
+  <dialog class="sheet fs" id="fsModal" aria-labelledby="fsTitle">
+    <div class="fs__head">
+      <div>
+        <h2 class="fs__title" id="fsTitle" data-i18n="capTitle">Kurz bestätigen, dass du kein Roboter bist</h2>
+        <p class="fs__sub" data-i18n="capSub">Ein Klick noch, dann ist deine Anfrage unterwegs.</p>
+      </div>
+      <button class="sheet__close fs__close" type="button" id="fsClose"><span data-i18n="close">Schliessen</span></button>
+    </div>
+    <div class="fs__body">
+      <p class="fs__loading" id="fsLoading"><i class="px px--blink" aria-hidden="true"></i> <span data-i18n="capLoading">Wird geladen …</span></p>
+      <iframe name="fs-frame" id="fsFrame" title="FormSubmit" src="about:blank"></iframe>
+    </div>
+  </dialog>
 
   <footer class="foot">
     <div class="foot__inner wrap">

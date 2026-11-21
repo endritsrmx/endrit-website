@@ -62,47 +62,63 @@
     inner.appendChild(clone);
   }
 
-  /* ======================= Formular ======================= */
+  /* ======================= Formular (FormSubmit + Captcha-Fenster) ======================= */
   const form = $('#form');
+  const modal = $('#fsModal'), frame = $('#fsFrame');
   if (form) {
     const status = $('#formStatus');
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      const d = new FormData(form);
-      const name = String(d.get('name') || '').trim();
-      const email = String(d.get('email') || '').trim();
-      const msg = String(d.get('message') || '').trim();
+    const hid = n => form.querySelector(`input[type=hidden][name="${n}"]`);
+    let armed = false;
+    form.addEventListener('submit', e => {
+      const name = form.elements.name.value.trim();
+      const email = form.elements.email.value.trim();
+      const msg = form.elements.message.value.trim();
       $$('.is-invalid', form).forEach(x => x.classList.remove('is-invalid'));
       if (!name || !email || !msg) {
+        e.preventDefault();
         [['name', name], ['email', email], ['message', msg]].forEach(([n, v]) => { if (!v) form.elements[n].classList.add('is-invalid'); });
         status.textContent = I.t('errEmpty');
         (form.querySelector('.is-invalid') || form.elements.name).focus();
         return;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-        form.elements.email.classList.add('is-invalid'); form.elements.email.focus();
+        e.preventDefault(); form.elements.email.classList.add('is-invalid'); form.elements.email.focus();
         status.textContent = I.t('errMail'); return;
       }
       const checked = form.querySelector('input[name="topic"]:checked');
-      const topic = checked ? checked.nextElementSibling.textContent : '';
-      const endpoint = form.dataset.endpoint;
-      if (endpoint) {
-        const btn = form.querySelector('button[type="submit"]');
-        btn.disabled = true; status.textContent = I.t('sending');
-        d.set('topic', topic);
-        try {
-          const res = await fetch(endpoint, { method: 'POST', body: d, headers: { Accept: 'application/json' } });
-          if (!res.ok) throw new Error(res.status);
-          form.reset(); status.textContent = I.t('okSent');
-        } catch (err) { status.textContent = I.t('errSend'); }
-        btn.disabled = false;
-        return;
-      }
-      const subject = `${I.t('subject')}: ${topic}`;
-      const body = `${msg}\n\n${name}\n${email}`;
-      location.href = `mailto:info@endr-it.ch?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      status.textContent = I.t('okMailto');
+      hid('service').value = checked ? checked.nextElementSibling.textContent : '';
+      hid('_replyto').value = email;
+      const first = name.split(' ').filter(Boolean)[0];
+      hid('_autoresponse').value = I.t('autoresponse').replace('{n}', first ? ' ' + first : '');
+      hid('_next').value = new URL('gesendet.html', location.href).href;
+      status.textContent = I.t('sending');
+      // Formular schickt normal ins iframe im Fenster, dort erscheint das Captcha von FormSubmit
+      armed = true;
+      modal.classList.add('is-loading');
+      if (!modal.open) modal.showModal();
+      if (lenis) lenis.stop();
     });
+    frame.addEventListener('load', () => { if (armed) modal.classList.remove('is-loading'); });
+    function closeModal(sent) {
+      armed = false;
+      if (modal.open) modal.close();
+      try { frame.src = 'about:blank'; } catch (x) {}
+      if (lenis) lenis.start();
+      if (sent) { form.reset(); status.textContent = I.t('okSent'); }
+      else status.textContent = I.t('capCancel');
+    }
+    $('#fsClose').addEventListener('click', () => closeModal(false));
+    modal.addEventListener('cancel', e => { e.preventDefault(); closeModal(false); });
+    addEventListener('message', e => {
+      if (e.origin !== location.origin || !e.data || e.data.type !== 'endrit-form-sent') return;
+      closeModal(true);
+    });
+    // Rückkehr ohne Fenster (z. B. ohne JavaScript im iframe): ?gesendet=1
+    const q = new URLSearchParams(location.search);
+    if (q.get('gesendet') === '1') {
+      status.textContent = I.t('okSent');
+      history.replaceState(null, '', location.pathname + '#kontakt');
+    }
   }
   $$('[data-pick]').forEach(a => a.addEventListener('click', () => {
     const r = form && form.querySelector(`input[value="${a.dataset.pick}"]`);

@@ -8,19 +8,22 @@ Kein Build-Schritt, alles liegt lokal: Schriften, GSAP, Lenis. Es wird nichts an
 | `index.html` | Startseite (One-Page) |
 | `projekte.html` | Portfolio mit Raster, Filter und Detailansicht |
 | `datenschutz.html` | Datenschutz & Impressum |
+| `CNAME` | Domain endr-it.ch für GitHub Pages (nicht löschen) |
 | `js/projects.js` | **Deine Projekte** (hier neue eintragen) |
 | `js/i18n.js` | Alle Texte auf Deutsch und Englisch |
 | `css/style.css` | Design, Farben ganz oben unter „Tokens“ |
 | `assets/logo.svg` | Dein Logo als Vektor (für Briefpapier, Social Media usw.) |
 | `assets/logo-hell.svg` | Logo für dunkle Hintergründe |
 
-## Vor dem Hochladen
+## Formular
 
-1. **Foto**: Porträt als `assets/endrit.jpg` speichern (Hochformat, ca. 800 × 1000 px). Ohne Foto erscheint das Pixel-„E“.
-2. **Datenschutz**: In `datenschutz.html` den Text deiner bisherigen Seite einfügen.
-3. **Formular**: Öffnet aktuell das Mailprogramm mit fertiger Anfrage. Für direktes Senden einen Dienst wie Formspree
-   einrichten und in `index.html` beim Formular `data-endpoint="https://formspree.io/f/DEINE-ID"` eintragen.
-4. **Beispielprojekte** in `js/projects.js` durch echte ersetzen (siehe unten).
+Anfragen gehen wie bisher über FormSubmit an info@endr-it.ch. Beim Senden öffnet sich ein Fenster mit dem
+Captcha von FormSubmit; danach erhält der Kunde automatisch eine Eingangsbestätigung.
+`gesendet.html` meldet der Seite, dass die Anfrage angekommen ist (nicht löschen).
+
+## Noch zu tun
+
+- **Beispielprojekte** in `js/projects.js` durch echte ersetzen (siehe unten).
 
 ## Neues Projekt eintragen
 
